@@ -628,10 +628,11 @@ function analyze(){
 
 let name = document.getElementById("name").value.trim()
 let email = document.getElementById("email").value.trim()
-// Collect selected roles from checkbox dropdown
-let roleCheckboxes = document.querySelectorAll('input[name="roles"]:checked');
-let selectedRoles = Array.from(roleCheckboxes).map(cb => cb.value.trim());
-let role = selectedRoles.join(", ");
+// Get selected role from single-select dropdown
+let roleSelect = document.getElementById("role");
+let selectedRole = roleSelect ? roleSelect.value.trim() : "";
+let selectedRoles = selectedRole ? [selectedRole] : [];
+let role = selectedRole; // use single role string for display/computation
 
 // Get selected gender from radio buttons
 let genderElement = document.querySelector('input[name="gender"]:checked')
@@ -663,9 +664,9 @@ if(name === "" || email === "" || skills === ""){
     return;
 }
 
-// Validation for roles selection
+// Validation for role selection
 if(selectedRoles.length === 0){
-    document.getElementById("result").innerText = "Please select at least one role.";
+    document.getElementById("result").innerText = "Please select a role.";
     return;
 }
 
@@ -778,6 +779,10 @@ if(salaryExpectation > 0 && avgSalary > 0){
 }
 
 const dashboardEl = document.getElementById("dashboard");
+if(!dashboardEl){
+    console.error("Dashboard element with id 'dashboard' not found in the DOM.");
+    return;
+}
 document.getElementById("result").querySelector("p")?.remove?.();
 
 const pillsMatched = matchedSkills.length
@@ -920,6 +925,30 @@ fetch("saveData.php",{
 })
 
 }
+
+// Reset all analyzer form fields and related state
+function resetForm(){
+    // clear text inputs
+    ["name","email","company","skills","projects","experience","experienceMonths","salaryExpectation"].forEach(id=>{
+        let el = document.getElementById(id);
+        if(el) el.value = "";
+    });
+    // reset dropdowns and radios
+    let rs = document.getElementById("role");
+    if(rs) rs.selectedIndex = 0;
+    document.querySelectorAll('input[name="gender"]').forEach(r=>r.checked=false);
+    let intern = document.getElementById("internship");
+    if(intern) intern.checked = false;
+    // clear result area
+    let res = document.getElementById("result");
+    if(res) res.innerHTML = "";
+    // reset any resume extraction/status
+    resumeExtractedSkills = [];
+    let status = document.getElementById("resumeStatus");
+    if(status) status.textContent = "";
+    lastAnalysis = null;
+}
+
 // Warn user before refreshing or leaving the page if form fields contain data
 window.addEventListener("beforeunload", function (e) {
 
