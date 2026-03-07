@@ -1,5 +1,6 @@
 <?php
 require "db.php";
+require "recruiter_auth.php";
 
 $role = $_GET['role'] ?? "";
 $min_score = $_GET['min_score'] ?? "";
