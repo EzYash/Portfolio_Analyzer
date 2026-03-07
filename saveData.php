@@ -90,22 +90,22 @@ $matched_skills_json = json_encode($matched_skills);
 $missing_skills_json = json_encode($missing_skills);
 
 $stmt->bind_param(
-"isssisisssiidds",
-$developer_id,
-$role,
-$company,
-$company_role,
-$score,
-$projects,
-$skill_match_percent,
-$readiness_label,
-$matched_skills_json,
-$missing_skills_json,
-$experience_years,
-$experience_months,
-$experience_total,
-$salary_expectation,
-$analysis_date
+    "issssissssiidds",
+    $developer_id,          // i
+    $role,                  // s
+    $company,               // s
+    $company_role,          // s
+    $score,                 // i   ← was wrong
+    $projects,              // s   ← string because you implode
+    $skill_match_percent,   // i
+    $readiness_label,       // s
+    $matched_skills_json,   // s
+    $missing_skills_json,   // s
+    $experience_years,      // i
+    $experience_months,     // i
+    $experience_total,      // d
+    $salary_expectation,    // d
+    $analysis_date          // s
 );
 
 if($stmt->execute()){
