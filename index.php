@@ -20,13 +20,13 @@ require "auth.php";
       <span class="brand-name">Portfolio Analyzer</span>
     </div>
     <nav class="nav">
-      <button class="nav-btn active" id="nav-home" type="button" onclick="showView('home')">Home</button>
-      <button class="nav-btn" id="nav-analyzer" type="button" onclick="showView('analyzer')">Portfolio Analyzer</button>
+      <button class="nav-btn active" id="nav-analyzer" type="button" onclick="showView('analyzer')">Portfolio Analyzer</button>
       <button class="nav-btn" id="nav-career" type="button" onclick="showView('career')">Career Map</button>
 
       <a href="dashboard.php" class="nav-btn">Dashboard</a>
       <a href="history.php" class="nav-btn">History</a>
       <a href="logout.php" class="nav-btn">Logout</a>
+      <button class="nav-btn" type="button" onclick="resetForm()">Reset</button>
     </nav>
   </div>
 </header>
@@ -34,7 +34,7 @@ require "auth.php";
 <div class="main" style="display:flex; flex-direction:column; align-items:center;">
 <div class="background-blur"></div>
 
-<section class="view view-home" id="view-home">
+<section class="view view-home" id="view-home" hidden>
 
 
 
@@ -72,68 +72,20 @@ require "auth.php";
 </div>
 
 <div class="field-group">
-<label>Select Roles *</label>
-
-<details class="roles-dropdown" style="border:1px solid #e5e7eb; border-radius:6px; padding:10px;">
-<summary>Select Role(s)</summary>
-
-<div class="checkbox-roles" style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
-
-<label class="role-option" style="display:flex; justify-content:space-between; align-items:center;">
-<input type="checkbox" name="roles" value="Full Stack Developer" id="role-fullstack">
-<span>Full Stack Developer</span>
-</label>
-
-<label class="role-option" style="display:flex; justify-content:space-between; align-items:center;">
-<input type="checkbox" name="roles" value="Frontend Developer" id="role-frontend">
-<span>Frontend Developer</span>
-</label>
-
-<label class="role-option" style="display:flex; justify-content:space-between; align-items:center;">
-<input type="checkbox" name="roles" value="Backend Developer" id="role-backend">
-<span>Backend Developer</span>
-</label>
-
-<label class="role-option" style="display:flex; justify-content:space-between; align-items:center;">
-<input type="checkbox" name="roles" value="Software Engineer" id="role-software">
-<span>Software Engineer</span>
-</label>
-
-<label class="role-option" style="display:flex; justify-content:space-between; align-items:center;">
-<input type="checkbox" name="roles" value="Data Scientist" id="role-datasci">
-<span>Data Scientist</span>
-</label>
-
-<label class="role-option" style="display:flex; justify-content:space-between; align-items:center;">
-<input type="checkbox" name="roles" value="Machine Learning Engineer" id="role-ml">
-<span>Machine Learning Engineer</span>
-</label>
-
-<label class="role-option" style="display:flex; justify-content:space-between; align-items:center;">
-<input type="checkbox" name="roles" value="AI Engineer" id="role-ai">
-<span>AI Engineer</span>
-</label>
-
-<label class="role-option" style="display:flex; justify-content:space-between; align-items:center;">
-<input type="checkbox" name="roles" value="DevOps Engineer" id="role-devops">
-<span>DevOps Engineer</span>
-</label>
-
-<label class="role-option" style="display:flex; justify-content:space-between; align-items:center;">
-<input type="checkbox" name="roles" value="Cybersecurity Analyst" id="role-cyber">
-<span>Cybersecurity Analyst</span>
-</label>
-
-<label class="role-option" style="display:flex; justify-content:space-between; align-items:center;">
-<input type="checkbox" name="roles" value="Game Developer" id="role-game">
-<span>Game Developer</span>
-</label>
-
-</div>
-
-</details>
-
-<p class="helper">You can select multiple roles.</p>
+<label for="role">Select Role *</label>
+<select id="role" name="role" required>
+  <option value="" disabled selected>Select Role</option>
+  <option>Full Stack Developer</option>
+  <option>Frontend Developer</option>
+  <option>Backend Developer</option>
+  <option>Software Engineer</option>
+  <option>Data Scientist</option>
+  <option>Machine Learning Engineer</option>
+  <option>AI Engineer</option>
+  <option>DevOps Engineer</option>
+  <option>Cybersecurity Analyst</option>
+  <option>Game Developer</option>
+</select>
 </div>
 
 <div class="field-group">
@@ -220,7 +172,151 @@ Internship Experience
 
 </div>
 
+
 <script src="assests/js/script.js"></script>
+
+<!-- Chatbot UI -->
+<style>
+#chatToggle{
+ position:fixed;
+ bottom:20px;
+ right:20px;
+ background:#4f46e5;
+ color:white;
+ border:none;
+ border-radius:50%;
+ width:56px;
+ height:56px;
+ font-size:22px;
+ cursor:pointer;
+ box-shadow:0 6px 16px rgba(0,0,0,0.3);
+}
+
+#chatBox{
+ position:fixed;
+ bottom:90px;
+ right:20px;
+ width:320px;
+ height:420px;
+ background:white;
+ border-radius:10px;
+ box-shadow:0 10px 25px rgba(0,0,0,0.25);
+ display:none;
+ flex-direction:column;
+ overflow:hidden;
+ font-family:Poppins, sans-serif;
+}
+
+#chatHeader{
+ background:#4f46e5;
+ color:white;
+ padding:10px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+
+#chatMessages{
+ flex:1;
+ padding:10px;
+ overflow-y:auto;
+ font-size:14px;
+ color:black;
+}
+
+.chatMsg{
+ margin-bottom:8px;
+}
+
+.userMsg{
+ text-align:right;
+ color:black;
+}
+
+.botMsg{
+ text-align:left;
+ color:black;
+}
+
+#chatInput{
+ display:flex;
+ border-top:1px solid #eee;
+}
+
+#chatInput input{
+ flex:1;
+ border:none;
+ padding:8px;
+ font-size:14px;
+ color:white;
+ background:#4f46e5;
+}
+
+#chatInput button{
+ border:none;
+ background:#4f46e5;
+ color:white;
+ padding:8px 12px;
+ cursor:pointer;
+}
+</style>
+
+<button id="chatToggle" onclick="toggleChat()">💬</button>
+
+<div id="chatBox">
+<div id="chatHeader">
+<span>AI Assistant</span>
+<button onclick="toggleChat()" style="background:none;border:none;color:white;font-size:16px;cursor:pointer;">✕</button>
+</div>
+
+<div id="chatMessages"></div>
+
+<div id="chatInput">
+<input id="chatText" placeholder="Ask something...">
+<button onclick="sendChat()">Send</button>
+</div>
+</div>
+
+<script>
+function toggleChat(){
+ const box=document.getElementById("chatBox");
+ box.style.display = box.style.display==="flex" ? "none" : "flex";
+}
+
+async function sendChat(){
+
+ const input=document.getElementById("chatText");
+ const msg=input.value.trim();
+ if(!msg) return;
+
+ const messages=document.getElementById("chatMessages");
+
+ messages.innerHTML += `<div class="chatMsg userMsg"><b>You:</b> ${msg}</div>`;
+ input.value="";
+
+ const res = await fetch("http://localhost:5001/chat_api",{
+  method:"POST",
+  headers:{
+   "Content-Type":"application/json"
+  },
+  body:JSON.stringify({message:msg})
+ });
+
+ const data = await res.json();
+
+ let reply="Error contacting AI";
+
+ if(data.output_text){
+   reply=data.output_text;
+ }
+ else if(data.output && data.output[0] && data.output[0].content){
+   reply=data.output[0].content[0].text;
+ }
+
+ messages.innerHTML += `<div class="chatMsg botMsg"><b>AI:</b> ${reply}</div>`;
+ messages.scrollTop = messages.scrollHeight;
+}
+</script>
 
 </body>
 </html>
